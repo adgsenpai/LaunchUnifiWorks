@@ -36,17 +36,19 @@
 </body>
 
 <script>
-    // Listen for the user info from the parent window
+    // Listen for messages from the parent window
     window.addEventListener('message', function(event) {
         // For security, verify the origin of the message
-        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net/']; // Replace with your parent origin
+        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net']; // Replace with your parent origin
         if (!allowedOrigins.includes(event.origin)) {
             console.warn('Origin not allowed:', event.origin);
             return;
         }
 
-        if (event.data.action === 'userInfo') {
-            const userInfo = event.data.data;
+        const data = event.data;
+
+        if (data.action === 'userInfo') {
+            const userInfo = data.data;
             console.log('User Information received from parent:', userInfo);            
 
             // Display the userInfo in the placeholder element
@@ -60,10 +62,25 @@
                 console.error('Placeholder element #userInfo not found.');
             }
         }
-    });
 
-    // Optionally, send a message back to the parent to acknowledge receipt
-    window.parent.postMessage({ action: 'acknowledge', message: 'User info received' }, 'https://unifiappserv007.azurewebsites.net/'); // Replace with your parent origin
+        // Handle CSS injection
+        if (data.action === 'injectCSS') {
+            const cssUrl = data.cssUrl;
+            if (cssUrl) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = cssUrl;
+                link.onload = () => console.log(`CSS loaded from ${cssUrl}`);
+                link.onerror = () => console.error(`Failed to load CSS from ${cssUrl}`);
+                document.head.appendChild(link);
+            } else {
+                console.error('No CSS URL provided for injection.');
+            }
+        }
+
+        // Optionally, send a message back to the parent to acknowledge receipt
+        window.parent.postMessage({ action: 'acknowledge', message: 'Messages received and processed.' }, event.origin);
+    });
 </script>
 
 </html>
