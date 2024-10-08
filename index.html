@@ -29,25 +29,41 @@
         <a href="https://edge.unifi.works" target="_blank" class="inline-block w-full text-center bg-primary text-white font-semibold py-3 px-4 rounded hover:bg-indigo-600 transition-colors duration-300">
             Launch Application <span class="text-sm ml-2">→</span>
         </a>
+
+        <!-- Placeholder for User Info -->
+        <div id="userInfo" class="mt-6 text-gray-700"></div>
     </div>
 </body>
 
 <script>
     // Listen for the user info from the parent window
     window.addEventListener('message', function(event) {
-        // Validate the message origin if needed
+        // For security, verify the origin of the message
+        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net/']; // Replace with your parent origin
+        if (!allowedOrigins.includes(event.origin)) {
+            console.warn('Origin not allowed:', event.origin);
+            return;
+        }
+
         if (event.data.action === 'userInfo') {
             const userInfo = event.data.data;
             console.log('User Information received from parent:', userInfo);            
-            // print the userInfo as a string
-            document.write(JSON.stringify(userInfo));                        
+
+            // Display the userInfo in the placeholder element
+            const userInfoDiv = document.getElementById('userInfo');
+            if (userInfoDiv) {
+                userInfoDiv.innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4">User Information</h2>
+                    <pre class="bg-gray-200 p-4 rounded">${JSON.stringify(userInfo, null, 2)}</pre>
+                `;
+            } else {
+                console.error('Placeholder element #userInfo not found.');
+            }
         }
     });
 
-    // Optionally, send a message back to the parent
-    window.parent.postMessage({ action: 'acknowledge', message: 'User info received' }, '*');
+    // Optionally, send a message back to the parent to acknowledge receipt
+    window.parent.postMessage({ action: 'acknowledge', message: 'User info received' }, 'https://unifiappserv007.azurewebsites.net/'); // Replace with your parent origin
 </script>
-
-
 
 </html>
