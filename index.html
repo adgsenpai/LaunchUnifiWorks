@@ -68,11 +68,7 @@
         console.log('Received data:', data);
         // convert the data from string to json
         data = JSON.parse(data);
-
-
-        const userInfo = data.data;
-        console.log('User info received:', userInfo);
-
+        const userInfo = data;
         if (userInfo && userInfo.userName) {
             const encodedUsername = btoa(userInfo.userName);
             console.log('Base64 Encoded Username:', encodedUsername);
