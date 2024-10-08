@@ -33,15 +33,20 @@
 </body>
 
 <script>
-    // fetch https://unifiappserv007.azurewebsites.net/Profile/GetName
-    fetch('https://unifiappserv007.azurewebsites.net/Profile/GetName')
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+    // Listen for the user info from the parent window
+    window.addEventListener('message', function(event) {
+        // Validate the message origin if needed
+        if (event.data.action === 'userInfo') {
+            const userInfo = event.data.data;
+            console.log('User Information received from parent:', userInfo);
+            // You can now use the userInfo object in the iframe
+        }
+    });
+
+    // Optionally, send a message back to the parent
+    window.parent.postMessage({ action: 'acknowledge', message: 'User info received' }, '*');
 </script>
+
+
 
 </html>
