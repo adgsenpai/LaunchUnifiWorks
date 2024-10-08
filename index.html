@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +9,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Optional: Configure Tailwind (if needed) -->
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#4F46E5', // Customize primary color if needed
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // Customize primary color if needed
+                    }
+                }
             }
-          }
         }
-      }
     </script>
 </head>
+
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-        <img src="https://unifiappserv007.azurewebsites.net/Account/GetLogoImage?v=32-20241008065451-32" alt="Unifi Logo" class="w-24 mx-auto mb-6">
-        <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Starter Application</h1>        
-        <a
-            id="launchApp"
-            href="https://edge.unifi.works" 
-            target="_blank" 
+        <img src="https://unifiappserv007.azurewebsites.net/Account/GetLogoImage?v=32-20241008065451-32"
+            alt="Unifi Logo" class="w-24 mx-auto mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Starter Application</h1>
+        <a id="launchApp" href="https://edge.unifi.works" target="_blank"
             class="inline-block w-full text-center bg-primary text-white font-semibold py-3 px-4 rounded hover:bg-indigo-600 transition-colors duration-300">
             Launch Application <span class="text-sm ml-2">→</span>
         </a>
@@ -55,7 +55,7 @@
     }
 
     // Listen for messages from the parent window
-    window.addEventListener('message', function(event) {
+    window.addEventListener('message', function (event) {
         console.log('Message received in iframe:', event);
 
         const allowedOrigins = ['https://unifiappserv007.azurewebsites.net']; // Parent origin
@@ -66,28 +66,29 @@
 
         const data = event.data;
         console.log('Received data:', data);
+        // convert the data from string to json
+        data = JSON.parse(data);
 
-        if (data.action === 'userInfo') {
-            const userInfo = data.data;
-            console.log('User info received:', userInfo);
 
-            if (userInfo && userInfo.userName) {
-                const encodedUsername = btoa(userInfo.userName);
-                console.log('Base64 Encoded Username:', encodedUsername);
+        const userInfo = data.data;
+        console.log('User info received:', userInfo);
 
-                const launchAppButton = document.getElementById('launchApp');
-                if (launchAppButton) {
-                    launchAppButton.href = `https://edge.unifi.works/auth/${encodedUsername}`;
-                    console.log('Launch Application button href updated to:', launchAppButton.href);
-                } else {
-                    console.error('Launch Application button not found.');
-                }
+        if (userInfo && userInfo.userName) {
+            const encodedUsername = btoa(userInfo.userName);
+            console.log('Base64 Encoded Username:', encodedUsername);
 
-                // Display user information
-                displayUserInfo(userInfo);
+            const launchAppButton = document.getElementById('launchApp');
+            if (launchAppButton) {
+                launchAppButton.href = `https://edge.unifi.works/auth/${encodedUsername}`;
+                console.log('Launch Application button href updated to:', launchAppButton.href);
             } else {
-                console.error('Invalid userInfo data received.');
+                console.error('Launch Application button not found.');
             }
+
+            // Display user information
+            displayUserInfo(userInfo);
+        } else {
+            console.error('User information not found in the data:', data);
         }
     });
 </script>
