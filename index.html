@@ -30,6 +30,37 @@
         </a>
     </div>
 </body>
- 
+
+<script>
+    // Listen for messages from the parent window
+    window.addEventListener('message', function(event) {
+        // For security, verify the origin of the message
+        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net']; // Replace with your parent origin
+        if (!allowedOrigins.includes(event.origin)) {
+            console.warn('Origin not allowed:', event.origin);
+            return;
+        }
+
+        const data = event.data;
+
+        if (data.action === 'updateLaunchHref') {
+            const newUrl = data.url;
+            if (newUrl) {
+                const launchButton = document.getElementById('launchApp');
+                if (launchButton) {
+                    launchButton.href = newUrl;
+                    console.log('Launch Application button href updated to:', newUrl);
+                } else {
+                    console.error('Button with id "launchApp" not found.');
+                }
+            } else {
+                console.error('No URL provided to update href.');
+            }
+
+            // Optionally, send an acknowledgment back to the parent
+            window.parent.postMessage({ action: 'acknowledge', message: 'Launch button href updated successfully.' }, event.origin);
+        }
+    });
+</script>
 
 </html>
