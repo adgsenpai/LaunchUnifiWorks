@@ -38,8 +38,9 @@
         // Validate the message origin if needed
         if (event.data.action === 'userInfo') {
             const userInfo = event.data.data;
-            console.log('User Information received from parent:', userInfo);
-            // You can now use the userInfo object in the iframe
+            console.log('User Information received from parent:', userInfo);            
+            // print the userInfo as a string
+            document.write(JSON.stringify(userInfo));                        
         }
     });
 
