@@ -56,26 +56,25 @@
 
     // Listen for messages from the parent window
     window.addEventListener('message', function(event) {
-        // For security, verify the origin of the message
-        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net']; // Replace with your parent page origin
+        console.log('Message received in iframe:', event);
+
+        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net']; // Parent origin
         if (!allowedOrigins.includes(event.origin)) {
             console.warn('Origin not allowed:', event.origin);
             return;
         }
 
         const data = event.data;
+        console.log('Received data:', data);
 
-        // Handle 'userInfo' action
         if (data.action === 'userInfo') {
             const userInfo = data.data;
-            console.log('Received userInfo:', userInfo);
+            console.log('User info received:', userInfo);
 
             if (userInfo && userInfo.userName) {
-                // Base64 encode the username
                 const encodedUsername = btoa(userInfo.userName);
                 console.log('Base64 Encoded Username:', encodedUsername);
 
-                // Update the href of the Launch Application button
                 const launchAppButton = document.getElementById('launchApp');
                 if (launchAppButton) {
                     launchAppButton.href = `https://edge.unifi.works/auth/${encodedUsername}`;
@@ -90,8 +89,6 @@
                 console.error('Invalid userInfo data received.');
             }
         }
-
-        // Handle other actions if needed
     });
 </script>
 
