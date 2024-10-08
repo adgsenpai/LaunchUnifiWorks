@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporting Hub UI</title>
+    <title>Launch Unifi Works</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Optional: Configure Tailwind (if needed) -->
@@ -24,18 +24,40 @@
         <img src="https://unifiappserv007.azurewebsites.net/Account/GetLogoImage?v=32-20241008065451-32" alt="Unifi Logo" class="w-24 mx-auto mb-6">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Starter Application</h1>        
         <a
-        id="launchApp"
-         href="https://edge.unifi.works" target="_blank" class="inline-block w-full text-center bg-primary text-white font-semibold py-3 px-4 rounded hover:bg-indigo-600 transition-colors duration-300">
+            id="launchApp"
+            href="https://edge.unifi.works" 
+            target="_blank" 
+            class="inline-block w-full text-center bg-primary text-white font-semibold py-3 px-4 rounded hover:bg-indigo-600 transition-colors duration-300">
             Launch Application <span class="text-sm ml-2">→</span>
         </a>
+
+        <!-- Section to Display User Info -->
+        <div id="userInfoContainer" class="mt-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">User Information</h2>
+            <ul class="text-gray-600">
+                <li><strong>Default Tenant:</strong> <span id="defaultTenant">N/A</span></li>
+                <li><strong>User ID Object:</strong> <span id="userIdObject">N/A</span></li>
+                <li><strong>User Name:</strong> <span id="userName">N/A</span></li>
+                <li><strong>User Groups:</strong> <span id="userGroups">N/A</span></li>
+            </ul>
+        </div>
     </div>
 </body>
 
+<!-- JavaScript to Handle Incoming Messages -->
 <script>
+    // Function to display user information
+    function displayUserInfo(userInfo) {
+        document.getElementById('defaultTenant').innerText = userInfo.defaultTenant;
+        document.getElementById('userIdObject').innerText = userInfo.userIdObject;
+        document.getElementById('userName').innerText = userInfo.userName;
+        document.getElementById('userGroups').innerText = userInfo.userGroups.join(', ') || 'None';
+    }
+
     // Listen for messages from the parent window
     window.addEventListener('message', function(event) {
         // For security, verify the origin of the message
-        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net']; // Replace with your parent origin
+        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net']; // Replace with your parent page origin
         if (!allowedOrigins.includes(event.origin)) {
             console.warn('Origin not allowed:', event.origin);
             return;
@@ -43,23 +65,33 @@
 
         const data = event.data;
 
-        if (data.action === 'updateLaunchHref') {
-            const newUrl = data.url;
-            if (newUrl) {
-                const launchButton = document.getElementById('launchApp');
-                if (launchButton) {
-                    launchButton.href = newUrl;
-                    console.log('Launch Application button href updated to:', newUrl);
-                } else {
-                    console.error('Button with id "launchApp" not found.');
-                }
-            } else {
-                console.error('No URL provided to update href.');
-            }
+        // Handle 'userInfo' action
+        if (data.action === 'userInfo') {
+            const userInfo = data.data;
+            console.log('Received userInfo:', userInfo);
 
-            // Optionally, send an acknowledgment back to the parent
-            window.parent.postMessage({ action: 'acknowledge', message: 'Launch button href updated successfully.' }, event.origin);
+            if (userInfo && userInfo.userName) {
+                // Base64 encode the username
+                const encodedUsername = btoa(userInfo.userName);
+                console.log('Base64 Encoded Username:', encodedUsername);
+
+                // Update the href of the Launch Application button
+                const launchAppButton = document.getElementById('launchApp');
+                if (launchAppButton) {
+                    launchAppButton.href = `https://edge.unifi.works/auth/${encodedUsername}`;
+                    console.log('Launch Application button href updated to:', launchAppButton.href);
+                } else {
+                    console.error('Launch Application button not found.');
+                }
+
+                // Display user information
+                displayUserInfo(userInfo);
+            } else {
+                console.error('Invalid userInfo data received.');
+            }
         }
+
+        // Handle other actions if needed
     });
 </script>
 
