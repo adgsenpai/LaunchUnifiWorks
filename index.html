@@ -31,4 +31,17 @@
         </a>
     </div>
 </body>
+
+<script>
+    // fetch https://unifiappserv007.azurewebsites.net/Profile/GetName
+    fetch('https://unifiappserv007.azurewebsites.net/Profile/GetName')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+</script>
+
 </html>
