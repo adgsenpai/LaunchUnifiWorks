@@ -81,6 +81,42 @@
         // Optionally, send a message back to the parent to acknowledge receipt
         window.parent.postMessage({ action: 'acknowledge', message: 'Messages received and processed.' }, event.origin);
     });
+
+    // Function to request parent data
+    function requestParentData(requestType) {
+        window.parent.postMessage({ action: 'requestParentData', requestType: requestType }, 'https://unifiappserv007.azurewebsites.net'); // Replace with your parent origin
+        console.log(`Requested data from parent: ${requestType}`);
+    }
+
+    // Example: Request the parent's title after a delay
+    window.addEventListener('load', function() {
+        // Wait for a short period to ensure the parent is ready
+        setTimeout(() => {
+            requestParentData('parentTitle');
+        }, 1000); // 1 second delay
+    });
+
+    // Listen for responses from the parent
+    window.addEventListener('message', function(event) {
+        // For security, verify the origin of the message
+        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net']; // Replace with your parent origin
+        if (!allowedOrigins.includes(event.origin)) {
+            console.warn('Origin not allowed:', event.origin);
+            return;
+        }
+
+        const data = event.data;
+
+        if (data.action === 'parentData') {
+            const receivedData = data.data;
+            console.log('Received data from parent:', receivedData);
+
+            // Example: Log the parent's title
+            if (receivedData.parentTitle) {
+                console.log('Parent Page Title:', receivedData.parentTitle);
+            }
+        }
+    });
 </script>
 
 </html>
