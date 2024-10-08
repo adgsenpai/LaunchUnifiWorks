@@ -66,7 +66,8 @@
 
         const data = event.data;
         console.log('Received data:', data);        
-        const userInfo = data;
+        // parse
+        const userInfo = JSON.parse(data.data);
         if (userInfo && userInfo.userName) {
             const encodedUsername = btoa(userInfo.userName);
             console.log('Base64 Encoded Username:', encodedUsername);
