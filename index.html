@@ -65,9 +65,7 @@
         }
 
         const data = event.data;
-        console.log('Received data:', data);
-        // convert the data from string to json
-        data = JSON.parse(data);
+        console.log('Received data:', data);        
         const userInfo = data;
         if (userInfo && userInfo.userName) {
             const encodedUsername = btoa(userInfo.userName);
