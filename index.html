@@ -74,7 +74,7 @@
     window.addEventListener('message', function (event) {
         console.log('Message received:', event);
 
-        const allowedOrigins = ['https://unifiappserv007.azurewebsites.net']; // Parent origin
+        const allowedOrigins = ['https://platform.unifi.works','https://unifiappserv007.azurewebsites.net']; // Parent origin
         if (!allowedOrigins.includes(event.origin)) {
             console.warn('Origin not allowed:', event.origin);
             return;
