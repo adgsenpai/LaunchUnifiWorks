@@ -64,7 +64,7 @@
 
 <body class="flex items-center justify-center min-h-screen">
 
-    <div class="bg-white shadow-lg rounded-lg p-8 container overlay" style="position: fixed; bottom: 15%;">
+    <div class="bg-white shadow-lg rounded-lg p-6 container overlay flex flex-col items-center" style="position: fixed; bottom: 15%;">
         <!-- Removed the Unifi Logo Image -->
         <!--
         <img src="https://unifiappserv007.azurewebsites.net/Account/GetLogoImage?v=32-20241008065451-32"
@@ -73,20 +73,20 @@
 
         <!-- Updated Button Text -->
         <a id="launchApp" href="#" target="_blank"
-            class="inline-block w-full text-center bg-primary text-white font-semibold py-3 px-4 rounded opacity-50 pointer-events-none transition-colors duration-300 hover:bg-indigo-600">
-            Click to Capture <span class="text-sm ml-2">→</span>
+            class="inline-block text-center bg-primary text-white font-semibold text-sm py-1.5 px-2.5 rounded opacity-50 pointer-events-none transition-colors duration-300 hover:bg-black">
+            Click to Capture <span class="text-xs ml-1">→</span>
         </a>
 
         <!-- Spinner and Message -->
         <div id="spinnerContainer" class="flex items-center justify-center mt-4">
             <!-- Spinner SVG -->
-            <svg class="animate-spin h-5 w-5 text-gray-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
+            <svg class="animate-spin h-4 w-4 text-gray-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor"
                     d="M4 12a8 8 0 018-8v8H4z"></path>
             </svg>
-            <span class="text-gray-500">Initiating session...</span>
+            <span class="text-gray-500 text-sm">Initiating session...</span>
         </div>
     </div>
 </body>
@@ -148,8 +148,7 @@
 
                 // Enable the button by removing disabling classes
                 launchAppButton.classList.remove('opacity-50', 'pointer-events-none');
-                // The hover:bg-indigo-600 class is already present for smooth transition
-                // So no need to add it here again
+                // The hover:bg-black class is already present for smooth transition
 
                 // Hide the spinner and message
                 hideSpinner();
