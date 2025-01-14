@@ -91,7 +91,7 @@
     </div>
 </body>
 
-<!-- JavaScript to Handle Incoming Messages -->
+<!-- JavaScript to Handle auth Parameter -->
 <script>
     // Function to show spinner and message
     function showSpinner() {
@@ -109,32 +109,62 @@
         }
     }
 
-    // Initially show the spinner
-    document.addEventListener('DOMContentLoaded', function () {
-        showSpinner();
-    });
+    // Function to get query parameters from URL
+    function getQueryParams() {
+        const params = {};
+        const queryString = window.location.search.substring(1);
+        const pairs = queryString.split("&");
+        for (const pair of pairs) {
+            const [key, value] = pair.split("=");
+            if (key) {
+                params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+            }
+        }
+        return params;
+    }
 
-    // Listen for messages from the parent window
-    window.addEventListener('message', function (event) {
-        console.log('Message received:', event);
+    // Function to decode Base64 string
+    function decodeBase64(str) {
+        try {
+            return decodeURIComponent(escape(window.atob(str)));
+        } catch (e) {
+            console.error('Error decoding Base64 string:', e);
+            return null;
+        }
+    }
 
-        const allowedOrigins = ['https://platform.unifi.works', 'https://unifiappserv007.azurewebsites.net']; // Parent origin
-        if (!allowedOrigins.includes(event.origin)) {
-            console.warn('Origin not allowed:', event.origin);
+    // Function to initialize the page based on auth parameter
+    function initialize() {
+        showSpinner(); // Show spinner initially
+
+        const params = getQueryParams();
+        const authParam = params['auth'];
+
+        if (!authParam) {
+            console.error('No auth parameter found in the URL.');
+            hideSpinner();
             return;
         }
 
-        const data = event.data;
-        console.log('Received data:', data);
+        // Decode the Base64 auth parameter
+        const decodedAuth = decodeBase64(authParam);
+        if (!decodedAuth) {
+            console.error('Failed to decode auth parameter.');
+            hideSpinner();
+            return;
+        }
 
-        // Parse the data (ensure data.data is a JSON string)
+        // Parse the JSON string
         let userInfo;
         try {
-            userInfo = JSON.parse(data.data);
+            userInfo = JSON.parse(decodedAuth);
         } catch (error) {
-            console.error('Failed to parse user info:', error);
+            console.error('Failed to parse JSON from auth parameter:', error);
+            hideSpinner();
             return;
         }
+
+        console.log('Decoded User Info:', userInfo);
 
         if (userInfo && userInfo.userName) {
             const encodedUsername = btoa(userInfo.userName);
@@ -154,11 +184,16 @@
                 hideSpinner();
             } else {
                 console.error('Launch Application button not found.');
+                hideSpinner();
             }
         } else {
-            console.error('User information not found in the data:', data);
+            console.error('User information not found in the auth parameter.');
+            hideSpinner();
         }
-    });
+    }
+
+    // Initialize the page after DOM content is loaded
+    document.addEventListener('DOMContentLoaded', initialize);
 </script>
 
 </html>
